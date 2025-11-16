@@ -4,7 +4,8 @@
 
 ## 📝 Description
 
-Pdf-Extractor is a web application built with Express.js that allows users to easily extract content from PDF documents. Its intuitive web interface makes the process simple and efficient.
+A powerful web application that extracts structured medical test data from any PDF or image-based health report regardless of format, layout, or template.
+Built with React, Node.js, Express, and AI-powered parsing, the system intelligently reads reports and returns clean, editable, categorized table data
 
 ## 🛠️ Tech Stack
 **Backend**
