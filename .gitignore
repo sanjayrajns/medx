@@ -1,0 +1,24 @@
+# Dependency directories
+/node_modules
+/backend/node_modules
+/client/node_modules
+
+# Environment variables
+.env
+/backend/.env
+/client/.env
+
+# Build outputs
+# The build output for your Vite client
+/client/dist
+
+# Editor and OS junk files
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+.vscode/
+
+# Ignore uploads folder (as seen in server.js)
+/backend/uploads
