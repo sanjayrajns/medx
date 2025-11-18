@@ -110,17 +110,17 @@ async function safeGeminiExtract(model, prompt, imagePart) {
       console.error(`Gemini error on model ${model} (Attempt ${attempt}):`, err.message);
 
       if (attempt === MAX_RETRIES || isPermanentError) {
-          console.log(`🛑 Stopping retries for ${model}. Triggering model fallback...`);
+          console.log(`Stopping retries for ${model}. Triggering model fallback...`);
           throw err;
       }
       
       if (isUnavailableError) {
-          console.log(`⚠️ API UNAVAILABLE. Waiting for ${1000 * attempt}ms before retry...`);
+          console.log(`API UNAVAILABLE. Waiting for ${1000 * attempt}ms before retry...`);
           await WAIT(1000 * attempt);
           continue;
       }
       
-      console.log(`🛑 Non-retriable error for ${model}. Triggering model fallback...`);
+      console.log(`Non-retriable error for ${model}. Triggering model fallback...`);
       throw err;
     }
   }
