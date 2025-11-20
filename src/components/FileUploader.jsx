@@ -18,7 +18,7 @@ const FileUploader = ({ isDarkMode, file, handleFileChange, isLoading }) => {
           
           <h2 className={`text-2xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Upload Your Medical Report</h2>
           <p className={`mb-8 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            Drop your PDF or image document here or click to browse
+            Drop your PDF or click to browse
           </p>
 
           <input
