@@ -7,12 +7,6 @@
 A powerful web application that extracts structured medical test data from any PDF or image-based health report regardless of format, layout, or template.
 Built with React, Node.js, Express, and AI-powered parsing, the system intelligently reads reports and returns clean, editable, categorized table data.
 
-### ✨ New Feature: Silent Persistence
-The app now automatically saves your extraction history using a "Silent ID" system.
-- **No Login Required**: A unique ID is generated and stored in your browser.
-- **Auto-Save**: Every extraction is saved to the cloud (Firebase).
-- **Auto-Load**: Your history reappears instantly when you revisit the site.
-
 ## 🛠️ Tech Stack
 **Backend**
 - 🚀 Express.js
