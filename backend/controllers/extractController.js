@@ -35,8 +35,17 @@ exports.processExtraction = async (req, res) => {
     // 4. Persistence (Save if Silent ID is present)
     if (silentId) {
         try {
+            const { age, gender, conditions } = req.body;
+            
             await db.collection("extractions").doc(silentId).set({
-                results: data.results, // Assuming 'data' has a 'results' key based on App.jsx usage
+                results: data.results, 
+                metadata: {
+                    age: age || null,
+                    gender: gender || null,
+                    conditions: conditions || null,
+                    fileName: req.file.originalname,
+                    fileSize: req.file.size
+                },
                 updatedAt: new Date().toISOString()
             }, { merge: true });
             console.log(`Data saved for user: ${silentId}`);

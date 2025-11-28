@@ -26,7 +26,7 @@ const LoadingToast = ({ isLoading, isDarkMode }) => {
         if (prev >= steps.length - 1) return prev; 
         return prev + 1;
       });
-    }, 10000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [isLoading, steps.length]);
