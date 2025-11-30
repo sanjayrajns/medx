@@ -14,6 +14,7 @@ export default function PatientHistory() {
   const [conditions, setConditions] = useState("");
   const [file, setFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isSkipping, setIsSkipping] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   
   const [isDarkMode, setIsDarkMode] = useState(true); 
@@ -38,12 +39,42 @@ export default function PatientHistory() {
 
   const handleSkip = () => {
     handleRemoveFile(); // Clear file before skipping
-    navigate("/dashboard");
+    setIsSkipping(true);
+    
+    // Short delay to show the loading animation
+    setTimeout(() => {
+        navigate("/dashboard");
+    }, 0);
+  };
+
+  const [abortController, setAbortController] = useState(null);
+  const [isCoolingDown, setIsCoolingDown] = useState(false);
+
+  const startCooldown = () => {
+    setIsCoolingDown(true);
+    setTimeout(() => {
+      setIsCoolingDown(false);
+    }, 30000); // 30 second cooldown
+  };
+
+  const handleCancel = () => {
+    if (abortController) {
+        abortController.abort();
+        setAbortController(null);
+    }
+    setIsProcessing(false);
+    toast.error("Process Cancelled. Please wait a moment...");
+    startCooldown();
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (isCoolingDown) {
+        toast("Please wait a moment before trying again.", { icon: "⏳" });
+        return;
+    }
+
     // Manual Validation Check (though 'required' attribute handles basic UI)
     if (!age || !gender || !file) {
         setErrorMsg("Age, Gender and File are mandatory.");
@@ -56,7 +87,9 @@ export default function PatientHistory() {
     formData.append("gender", gender);
     if (conditions) formData.append("conditions", conditions);
 
-    // Removed toast.loading as we are using LoadingToast component
+    // Create new AbortController
+    const controller = new AbortController();
+    setAbortController(controller);
     
     try {
       setIsProcessing(true);
@@ -70,24 +103,32 @@ export default function PatientHistory() {
             "Content-Type": "multipart/form-data",
             "x-user-id": silentId
           },
+          signal: controller.signal
         }
       );
       
       toast.success("Analysis complete!");
       navigate("/dashboard", { state: response.data });
     } catch (error) {
+      if (axios.isCancel(error)) {
+          console.log("Request canceled");
+          return;
+      }
       console.error("Upload failed:", error);
       const msg = error.response?.data?.error || "Upload failed. Please try again.";
       setErrorMsg(msg);
       toast.error(msg);
     } finally {
       setIsProcessing(false);
+      setAbortController(null);
+      startCooldown();
     }
   };
 
   return (
     <div className={`min-h-screen flex justify-center items-center p-6 transition-colors duration-500 font-montserrat ${isDarkMode ? 'bg-black' : 'bg-gradient-to-b from-indigo-100 to-white'}`}>
-      <LoadingToast isLoading={isProcessing} isDarkMode={isDarkMode} />
+      <LoadingToast isLoading={isProcessing} isDarkMode={isDarkMode} onCancel={handleCancel} />
+      
       
       <div className={`w-full max-w-xl shadow-xl rounded-2xl p-8 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
         <h2 className={`text-2xl font-bold text-center mb-6 ${isDarkMode ? 'text-indigo-400' : 'text-indigo-700'}`}>Patient History</h2>
@@ -141,7 +182,7 @@ export default function PatientHistory() {
                 <button
                   type="button"
                   onClick={handleRemoveFile}
-                  className="text-sm text-red-600 hover:underline cursor-pointer"
+                  className="px-4 py-2 bg-red-500 text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors cursor-pointer"
                 >
                   Remove Selected File
                 </button>
@@ -152,10 +193,10 @@ export default function PatientHistory() {
           </div>
           <button
             type="submit"
-            disabled={isProcessing} 
+            disabled={isProcessing || isCoolingDown} 
             className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 disabled:opacity-50 cursor-pointer transition-colors"
           >
-            {isProcessing ? "Processing..." : "Continue"}
+            {isProcessing ? "Processing..." : (isCoolingDown ? "Please wait..." : "Continue")}
           </button>
         </form>
         

@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { FileText } from "lucide-react";
 
-const LoadingToast = ({ isLoading, isDarkMode }) => {
+const LoadingToast = ({ isLoading, isDarkMode, onCancel, customSteps }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   // Define the steps of the AI analysis process
-  const steps = [
+  const defaultSteps = [
     "Uploading document securely...",
     "Scanning text for medical data...",
     "Identifying parameters & ranges...",
     "Structuring final summary...",
     "Finalizing results..."
   ];
+
+  const steps = customSteps || defaultSteps;
 
   useEffect(() => {
     if (!isLoading) {
@@ -26,7 +28,7 @@ const LoadingToast = ({ isLoading, isDarkMode }) => {
         if (prev >= steps.length - 1) return prev; 
         return prev + 1;
       });
-    }, 5000);
+    }, 2500);
 
     return () => clearInterval(interval);
   }, [isLoading, steps.length]);
@@ -79,9 +81,14 @@ const LoadingToast = ({ isLoading, isDarkMode }) => {
           </div>
           
           {/* Optional Cancel Button */}
-          <button className={`mt-8 text-sm font-medium hover:underline ${isDarkMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-gray-600'}`}>
-            Cancel Process
-          </button>
+          {onCancel && (
+            <button 
+                onClick={onCancel}
+                className="mt-8 px-6 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-full hover:bg-red-500 hover:text-white transition-all duration-300 text-sm font-medium cursor-pointer"
+            >
+                Cancel Process
+            </button>
+          )}
         </div>
       </div>
     </div>

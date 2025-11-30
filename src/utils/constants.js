@@ -4,7 +4,6 @@ export const TABLE_HEADERS = [
   { key: "test_name", label: "Test Name" },
   { key: "result", label: "Result" },
   { key: "unit", label: "Unit" },
-  { key: "biological_reference_interval", label: "Reference Interval" },
 ];
 
 export const SUPPORTED_REPORT_TYPES = [

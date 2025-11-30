@@ -8,14 +8,20 @@ exports.getHistory = async (req, res) => {
   }
 
   try {
-    const docRef = db.collection("extractions").doc(id);
-    const doc = await docRef.get();
+    const reportsSnapshot = await db.collection("extractions").doc(id).collection("reports")
+      .orderBy("createdAt", "desc")
+      .get();
 
-    if (!doc.exists) {
+    if (reportsSnapshot.empty) {
       return res.status(404).json({ message: "No history found for this user." });
     }
 
-    res.json({ data: doc.data() });
+    const history = reportsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    res.json({ data: history });
   } catch (error) {
     console.error("Error fetching history:", error);
     res.status(500).json({ error: "Failed to fetch history." });
